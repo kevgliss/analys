@@ -1,0 +1,11 @@
+[Core]
+Name = GFI
+Module = gfi
+DataType = URL, File
+ProcessType = Behavioral
+HostName = 
+
+[Documentation]
+Author = Kevin Glisson (kevin.glisson@gmail.com)
+Version = 1.0
+Description = "Submits files/urls and retrieves results from GFI sandbox"

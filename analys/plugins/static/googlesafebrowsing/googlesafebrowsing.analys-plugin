@@ -1,0 +1,12 @@
+[Core]
+Name = GoogleSafeBrowsing
+Module = googlesafebrowsing
+DataType = URL
+ProcessType = Static
+APIKey = ABQIAAAAOL6v2dcM6NvIBGpW8Xbs2hRvP7twFmfRFbePFF4pbD_lreO7DA
+
+[Documentation]
+Author = Kevin Glisson (kevin.glisson@gmail.com)
+Version = 1.0
+Description = "Queries googlesafebrowsing api for website reputation"
+

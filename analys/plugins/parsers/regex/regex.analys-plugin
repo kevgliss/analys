@@ -1,0 +1,10 @@
+[Core]
+Name = Regex
+Module = regex
+DataType = URL, File
+ProcessType = Static, Behavioral
+
+[Documentation]
+Author = Kevin Glisson (kevin.glisson@gmail.com)
+Version = 1.0
+Description = "Uses regex to scan results"

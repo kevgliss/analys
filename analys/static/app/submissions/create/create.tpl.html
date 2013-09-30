@@ -1,0 +1,101 @@
+<div class="row" ng-controller="SubmissionsCreateCtrl">
+    <div ng-controller="MsgCtrl">
+        <div ng-repeat="msg in messages" class="alert" ng-class="msg.type">
+            <button type="button" class="close" ng-click="dismissMessage($index)" data-dismiss="alert">x</button>
+            {{ msg.value }} 
+        </div>
+    </div>
+    <div ng-controller="AttachmentController">
+    <div class="col-md-6">
+        <div class="panel panel-default">
+            <div class="panel-heading">Upload
+                <a class="accordion-toggle minimize-box collapsed pull-right" data-toggle="collapse" href="#upload-help">Help</a>
+            </div>
+            <div class="panel-body">
+                <div class="form-group">
+                    <div class="col-lg-12">
+                        <input type="file" class="form-control" ng-model-instant id="fileToUpload" multiple onchange="angular.element(this).scope().setFiles(this)" />
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-lg-10">
+                        <input type="text" class="form-control" ng-model-instant placeholder="www.evil.com, www.evil1.com" id="urlToUpload" multiple onchange="angular.element(this).scope().setUrls(this)" />
+                    </div>
+                    <button class='btn btn-primary' ng-click="addUrls()"><i class="icon-circle-arrow-right"></i></button>
+                </div>
+            </div>
+            
+            <div id="upload-help" class="accordion-body body collapse col-lg-12" style="height: 0px;">
+                <h4>Files</h4>
+                <p>Analys can handle a multitude of different files. Upon upload Analys will inspect the file headers and determine which plugins are available for analysis.</p>
+
+                <p>Additionally analys is also capable of handling ZIP and RAR password protected files. If the ZIPs or RARs require a password you will be asked to provide the password or to choose from a list of previously used passwords.</p>
+
+                <p>Any file contained within a compressed file will be uploaded individually, you will also be given the oppertunity to exclude files contained within the file you do not want to submit.</p>
+
+                <h4>Urls</h4>
+                <p>In addition to file analysis, analsy is capable of URL analysis. The process is the same as a file submission, in that you will presented all avalilable plugin settings before you submit your creation</p>
+
+            </div>
+            <div ng-show class="panel-heading">Create</div>
+            <div ng-show class="panel-body">
+            </div>
+            <div ng-show class="panel-heading">Settings</div>
+            <div ng-show class="panel-body">
+            </div> 
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="bs-sidebar affix-top" role="complementary">
+        <div class="panel panel-default">
+            <div class="panel-heading">Staged</div>
+            <div class="panel-body">
+                <div ng-show="submissions.length">
+                    <table class="table">
+                    <tr ng-repeat="submission in submissions">
+                        <td><span><ul class="list-unstyled"><li>{{submission.resource}}</li><li class="small muted">{{submission.type}}</li></ul></span><td>
+                                <td>{{ submission.size }}</td>        
+                        <td class="pull-right"><button class='btn' ng-click="removeSubmission($index)"><i class="icon-remove"></i></button></td>
+                    </tr>
+                    </table>
+                    <div file-button>
+                        <button class='btn btn-success btn-large col-lg-12' ng-click="uploadSubmission()"><i class="icon-cloud-upload"> Upload</i></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="panel panel-default" ng-show="options.length">
+            <div class="panel-heading">Options</div>
+            <div class="panel-body">
+                <div ng-repeat="option in options">
+                    {{ option.resource }}
+                    <table class="table ">
+                        <tr ng-repeat="(plugin, option) in option.plugins">
+                            <td>
+                                <button type="button" class="btn btn-warning" ng-model="option[plugin]" data-toggle="button">Disable</button>
+                            </td>
+                            <td>{{ plugin }}</td>
+                            <td>
+                                <table>
+                                    <tr ng-repeat="(field, values) in option">
+                                        <td>{{ field }}</td>
+                                        <td>
+                                            <div class="btn-group" data-toggle="buttons">
+                                                <label ng-repeat="value in values.values" class="btn btn-default">
+                                                    <input type="radio" name="options" ng-model="options[option][plugin][field]" value="{{ value }}">{{ value }}
+                                                </label>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </td>
+                         </tr>
+                    </table>
+                </div>
+                <button class='btn btn-success btn-large col-lg-12' ng-click="createTasks()"><i class="icon-beaker"></i> Create Tasks</i></button>
+            </div>
+        </div>
+        </div> 
+    </div>
+    </div>
+</div>

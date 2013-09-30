@@ -1,0 +1,11 @@
+[Core]
+Name = Cuckcoo
+Module = cuckoo
+DataType = URL, File
+ProcessType = Behavioral
+HostName = localhost:1337
+
+[Documentation]
+Author = Kevin Glisson (kevin.glisson@gmail.com)
+Version = 1.0
+Description = "Submits files/urls and retrieves results from Cuckcoo sandbox"

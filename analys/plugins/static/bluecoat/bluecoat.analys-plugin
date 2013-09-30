@@ -1,0 +1,10 @@
+[Core]
+Name = Bluecoat
+Module = bluecoat
+DataType = URL
+ProcessType = Static
+
+[Documentation]
+Author = Kevin Glisson (kevin.glisson@gmail.com)
+Version = 1.0
+Description = "Queries bluecoat for website rating"

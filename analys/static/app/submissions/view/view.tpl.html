@@ -1,0 +1,51 @@
+<div class="row" ng-controller="SubmissionsViewCtrl">
+	<div class="col-md-12">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                Submissions
+            </div>
+            <div class="panel-body">
+				<ul class="list-group">
+                    <div class="list-group-item">
+                        <div class="input-group col-md-12">
+                          <input type="text" class="form-control input-group-lg" ng-model="filterSubs">
+                        </div><!-- /input-group -->
+                      </div><!-- /.col-lg-6 -->
+                      <div ng-repeat="sub in subs | filter:filterSubs">
+                          <a href="#{{ sub._id.$oid }}" class="list-group-item class accordion-toggle collapsed" data-toggle="collapse">
+                                <h4 class="list-group-item-heading">{{ sub.resource }}</h4>
+                                <p class="list-group-item-text">
+                                   <span class="label label-default">{{ sub.extension }}</span>
+                                   <span class="label label-default">{{ sub.owner }}</span>
+                                   <span class="label label-danger">Malicious</span><!-- TODO add binding for tags -->
+                                   <span class="badge pull-right">{{ sub.completed_tasks }}/{{ sub.total_tasks }}</span></span><!-- TODO add binding for task status -->
+                                </p>
+                            </a>
+                            <div id="{{ sub._id.$oid }}" class="accordion-body body collapse" style="height: 0px;">
+                                <div class="table-responsive">
+                                  <table class="table table-hover table-bordered">
+                                    <tr>
+                                        <th>Plugin</th>
+                                        <!---<th>Date Run</th>-->
+                                        <th>Status</th>
+                                        <th>Result</th>
+                                    </tr>
+                                    <tr ng-repeat="task in sub.tasks">
+                                        <td>{{ task.task_name }}</td>
+                                        <!--<td>{{ oid_to_date(task.result_id.$oid) }}</td> TODO transform into date at rendertime--> 
+                                        <td><span class="label label-success">{{ task.status }}</span></td>
+                                        <td><a href="#/results/{{ task.task_name }}/{{ task.result_id.$oid }}">View</a></td>
+                                    </tr>
+                                  </table>
+                                </div>
+                            </div>
+                        </div>
+                </ul>
+            <ul class="pager">
+              <li><a href="#">More</a></li>
+            </ul>
+            </div>
+		</div>
+	</div>
+</div>
+

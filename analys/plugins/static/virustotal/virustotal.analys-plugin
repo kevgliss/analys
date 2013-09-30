@@ -1,0 +1,13 @@
+[Core]
+Name = Virustotal
+Module = virustotal
+DataType = File,URL
+ProcessType = Static
+APIKey = cf7588e15257f4be676f1c16b52b4f50bc1cf8370267621b601f8530fd151d79
+Extensions = all
+
+[Documentation]
+Author = Kevin Glisson (kevin.glisson@gmail.com)
+Version = 1.0
+Description = "Queries VirusTotal for MD5s/URLs"
+

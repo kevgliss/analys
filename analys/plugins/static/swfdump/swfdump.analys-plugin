@@ -1,0 +1,10 @@
+[Core]
+Name = SWFDump
+Module = swfdump
+DataType = File
+ProcessType = Static
+Extensions = swf
+[Documentation]
+Author = Kevin Glisson (kevin.glisson@gmail.com)
+Version = 1.0
+Description = "Extracts domains and ip address from swf files"

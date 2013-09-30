@@ -1,0 +1,11 @@
+[Core]
+Name = Pdfid
+Module = pdfid
+DataType = File
+ProcessType = Static
+Extensions = pdf
+
+[Documentation]
+Author = Kevin Glisson (kevin.glisson@gmail.com)
+Version = 1.0
+Description = "Scans PDF files"

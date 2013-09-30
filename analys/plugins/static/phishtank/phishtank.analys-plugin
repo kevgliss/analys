@@ -1,0 +1,12 @@
+[Core]
+Name = Phishtank
+Module = phishtank
+DataType = URL
+ProcessType = Static
+APIKey = aef94bac80123edac2c4c6e9cb616ccfe6440b7a0bea3f04a4ff2b448812a752
+
+[Documentation]
+Author = Kevin Glisson (kevin.glisson@gmail.com)
+Version = 1.0
+Description = "Queries Phishtank for URLs"
+

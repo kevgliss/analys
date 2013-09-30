@@ -1,0 +1,11 @@
+[Core]
+Name = CoffeeSnake
+Module = coffeesnake
+DataType = File
+ProcessType = Static
+Extensions = jar
+
+[Documentation]
+Author = Kevin Glisson (kevin.glisson@gmail.com)
+Version = 1.0
+Description = "Scans JARs for known CVE's"

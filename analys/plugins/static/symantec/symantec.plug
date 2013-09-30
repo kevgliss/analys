@@ -1,0 +1,15 @@
+[Core]
+Name = Symantec
+Module = symantec
+DataType = File
+ProcessType = Analysis
+FirstName =  
+LastName = 
+Email = 
+Pin = 168141895954
+Company = 
+
+[Documentation]
+Author = Kevin Glisson (kevin.glisson@gmail.com)
+Version = 1.0
+Description = "Automatic submission to symantec"

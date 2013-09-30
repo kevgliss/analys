@@ -1,0 +1,17 @@
+<h4>PEScanner</h4>
+<div ng-repeat="(heading, values) in result" class="panel panel-default">
+  <div class="panel-heading">{{ heading }}</div>
+  <div class="panel-body" ng-switch on="heading">
+    <table ng-switch-when="Sections" class="table">
+        <tr>
+            <th ng-repeat="(key, value) in values[1]">{{ key }}</td>
+        </tr>
+        <tr ng-repeat="row in values">
+            <td ng-repeat="(key, value) in row">{{ value }}</td>
+        </tr>
+    </table>
+    <ul ng-switch-default class="list-unstyled">
+        <li ng-repeat="(key, value) in values"><strong>{{ key }}:</strong> {{ value }}</li>
+    </ul>
+  </div>
+</div>

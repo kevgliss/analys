@@ -1,0 +1,11 @@
+[Core]
+Name = Pescanner
+Module = pescanner
+DataType = File
+ProcessType = Static
+Extensions = exe,dll
+
+[Documentation]
+Author = Kevin Glisson (kevin.glisson@gmail.com)
+Version = 1.0
+Description = "Decodes executable file header"
