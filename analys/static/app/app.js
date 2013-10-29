@@ -10,7 +10,7 @@ var analys = angular.module( 'analys', [
   'analys.workflowCreate',
   'analys.workflowView',
   'analys.users',
-  'analys.preferences',
+  'analys.settings',
   'analys.plugins',
   'analys.dashboard',
   'analys.results',

@@ -16,86 +16,130 @@ import os
 import zipfile
 import rarfile
 import logging
+
 from analys.plugins.interfaces import File
-log = logging.getLogger(__file__)
+from analys.exceptions import EmptyCompressedFile, MaxFileDepth, NoValidPasswordFound
+from analys.datastore import Datastore
+
+log = logging.getLogger(__name__)
 
 class Extractor(object):
-    """ Extract attempts to identify the password used to
-        encrypt a zip file. The most common passwords.
-
-        :param data: raw file bytes
-        :type data: byte string
-
+    """ 
+        Extract attempts to identify the password used to
+        encrypt a zip file with the most common passwords.
     """
-    def __init__(self, file, passwords):
-        self.file = file
+    def __init__(self):
+        """
+            Initialize the extractor class
+
+            Args:
+                file_obj (str): string of bytes
+                passwords (list): List of passwords to use
+        """
         self.samples = []
-        self.max_depth = 5 #only allow five levels of recursion for compressed files
+        self.max_depth = 4 #only allow four levels of recursion for compressed files
         self.depth = 0
-        self.passwords = passwords
 
-    def extract(self):
+    def fetch_passwords(self):
+        return []
+
+    def zip_file(self, file_obj, passwords=None):
+        """
+            Decompress zip files
+        """
+        with zipfile.ZipFile(file_obj.create_temp_file(), 'r') as myzip:
+            #sanity checks on the file
+            log.debug("Zip Members: {}".format(",".join(myzip.namelist())))
+            for member in myzip.namelist():
+                filename = os.path.basename(member)
+                if not filename:
+                    continue
+
+                if passwords:
+                    for password in passwords:
+                        try:
+                            sample = myzip.open(member, 'r', password).read()
+                            break
+                        except (zipfile.BadZipfile, RuntimeError) as e:
+                            pass
+                    else:
+                        raise NoValidPasswordFound
+                
+                else:
+                    try:
+                        sample = myzip.open(member, 'r').read()
+                    except (zipfile.BadZipfile, RuntimeError) as e:
+                        raise e
+                
+                f = File(member, sample)
+                log.debug("Member extension: {}".format(f.extension()))
+                mime, extension = f.extension()
+                if extension in ['zip', 'rar']:
+                    log.debug("Found another compressesed file")
+                    self.depth = self.depth + 1
+                    self.extract(f)
+                else:
+                    self.samples.append(f)
+
+    def rar_file(self, file_obj, passwords=None):
+        """
+            Decompress rar files
+        """
+        with rarfile.RarFile(file_obj.create_temp_file(), 'r') as myrar:
+            log.debug("Rar Members: {}".format(",".join(myrar.namelist())))
+            for member in myrar.namelist():
+                filename = os.path.basename(member)
+                if not filename:
+                    continue
+
+                if passwords:
+                    for password in passwords:
+                        try:
+                            sample = myrar.open(member, 'r', password).read()
+                            break
+                        except RuntimeError as e:
+                            pass
+                    else:
+                        raise NoValidPasswordFound
+                
+                else:
+                    try:
+                        sample = myrar.open(member, 'r').read()
+                    except  RuntimeError as e:
+                        raise e
+                
+                f = File(member, sample)
+                log.debug("Member extension: {}".format(f.extension()))
+                mime, extension = f.extension()
+                if extension in ['zip', 'rar']:
+                    log.debug("Found another compressesed file")
+                    self.depth = self.depth + 1
+                    self.extract(f)
+                else:
+                    self.samples.append(f)
+            
+    def extract(self, file_obj, passwords=None):
+        """
+            Extract file
+
+            Args:
+                passwords (list): List of passwords to use
+            
+            Exceptions:
+                MaxFileDepth (AnalysException): The recursive limit was met (4)
+                EmptyCompressedFile (AnalysException): No files in archive
+        """
+        if passwords:
+            passwords = passwords + self.fetch_passwords()
+        
+        log.debug("Current depth {}".format(self.depth))
         if self.depth <= self.max_depth:
-            if 'zip' in self.file.extension():
-                with zipfile.ZipFile(self.file.create_temp_file(), 'r') as myzip:
-                    #sanity checks on the file
-                    for member in myzip.namelist():
-                        filename = os.path.basename(member)
-                        if not filename:
-                            continue
-
-                        try:
-                            sample = myzip.open(member, 'r',).read()
-                            f = File(member, sample)
-                            if f.extension() in ['zip', 'rar']:
-                                self.depth = self.depth + 1
-                                self.extract(f)
-                            else:
-                                self.samples.append(f)
-
-                        except (zipfile.BadZipfile, RuntimeError) as err:
-                            for password in self.passwords:
-
-                                try:
-                                    sample = myzip.open(member, 'r', password).read()
-                                    f = File(member, sample)
-                                    if f.extension() in ['zip', 'rar']:
-                                        self.depth = self.depth + 1
-                                        self.extract(f)
-                                    else:
-                                        self.samples.append(f)
-                                    break
-
-                                except (zipfile.BadZipfile, RuntimeError) as err:
-                                    continue
-
-            if 'rar' in self.file.extension():
-                with rarfile.RarFile(self.file.create_temp_file(), 'r') as myrar:
-                    #sanity checks on the file
-                    for member in myrar.infolist():
-                        if not member.filename:
-                            continue
-                        try:
-                            sample = myrar.open(member, 'r').read()
-                            f = File(member, sample)
-                            if f.extension() in ['zip', 'rar']:
-                                self.depth = self.depth + 1
-                                self.extract(f)
-                            else:
-                                self.samples.append(f)
-                        except:
-                            for password in self.passwords:
-                                try:
-                                    sample = myrar.open(member, 'r',
-                                            password).read()
-                                    f = File(member, sample)
-                                    if f.extension() in ['zip', 'rar']:
-                                        self.depth = self.depth + 1
-                                        self.extract(f)
-                                    else:
-                                        self.samples.append(f)
-                                    break
-                                except:
-                                    continue
+            if 'zip' in file_obj.extension():
+                self.zip_file(file_obj, passwords)
+            if 'rar' in file_obj.extension():
+                self.rar_file(file_obj, passwords)
+        else:
+            raise MaxFileDepth
+        
         return self.samples
 

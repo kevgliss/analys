@@ -8,28 +8,36 @@
 .. version:: 1.0
 .. moduleauthor:: Kevin Glisson <kevin.glisson@gmail.com>
 """
-import base64
+#TODO check for existing identical resource, confirm creation
+import logging
 from analys.common import mime
-from analys.common import utils
-from analys.common.url import deobfuscate
-from analys.plugins.interfaces import File
 from analys.common.extractor import Extractor
-from analys.plugins.pluginmanager import PluginManager
+from analys.plugins.interfaces import File, URL
 
-def url_submission(request_dict, datastore):
-    """ responsible for fetching all available options that are currently
-        installed it will then return the deobfuscated url along with options
-        and modules available for analysis
+log = logging.getLogger(__name__)
+
+def url_submission(request_dict, datastore, plugin_manager):
+    """ 
+        This function is responsible for fetching all available options that are currently
+        installed. It should be used used for any submission with a `resource_type` of `URL`.
+        
+        Args:
+            request_dict (dict): The request dictionary as created by pyramid
+            datastore (obj): The common datastore object used for all application
+                             datastore operations.
+            plugin_manager (obj): An instntiated plugin_manager that was configured on startup
+
+        Returns:
+            response (dict): A response dictionary containing the deobfuscated url and
+                             all the available plugins and options found to be installed/enabled
     """
     response = {}
 
-    # TODO check for existing identical resource, confirm creation
-    #fetch all the options from the installed plugins
-    #TODO set the plugin directorys via a config file
-    p = PluginManager()
-    p.load_plugins(['static'])
-    
-    response['extension'], response['resource'] = deobfuscate(request_dict['resource'].strip())
+    #the url object deobfuscates upon init
+    u = URL(request_dict['resource'])
+
+    response['resource'] = u.url
+    response['extension'] = u.get_url_parts().scheme
 
     response['owner'] = request_dict['owner']
     response['resource_type'] = 'URL'
@@ -37,66 +45,65 @@ def url_submission(request_dict, datastore):
     datastore.insert('submissions', response)
     
     #purposely dont store plugin options with submisison data
-    response['plugins'] = get_plugin_options(p, ['URL', 'File,URL'])
+    response['plugins'] = plugin_manager.get_plugin_options(['URL', 'File,URL'], datastore)
     return response
 
 
-def file_submission(request_dict, datastore):
-    """ responsible for fetching all available options that are currently
-        install, also responsible for handling the extraction of zip/rars
-        into seperate submissions
+def file_submission(request_dict, datastore, plugin_manager):
     """
+        This function is responsible for fetching all available options that are currently
+        installed. It should be used for any submission with a `resource_type` of `FILE`. 
+        
+        Args:
+            request_dict (dict): The request dictionary as created by pyramid
+            datastore (obj): The common datastore object used for all application
+                             datastore operations.
+            plugin_manager (obj): An instntiated plugin_manager that was configured on startup
+
+        Returns:
+            response (dict): A response dictionary containing all the available plugins and 
+            options found to be installed/enabled
+    """
+    def _submit_file(file_data, filename, parent=False):
+        file_id = datastore.store_file_data(file_data)
+        
+        file_response = {'resource': filename,
+                         'file_id': file_id, 
+                         'resource_type': 'FILE', 
+                         'extension': extension}
+        if parent:
+             file_response.update({"parent": parent})
+        
+        submission_id = datastore.insert('submissions', file_response)
+    
     response = {}
-
     response['owner'] = request_dict['owner']
-    p = PluginManager()
-    #load these on app init?
-    p.load_plugins(['static'])
-
+    
     f = File(request_dict['resource'].filename, request_dict['resource'].file.read())
     mimetype, extension = mime.search(f)
-    #TODO create a global errors
-    if not mimetype:
-        return
+   
+    parent_id = _submit_file(f.data, request_dict['resource'].filename)
 
+    #TODO create frontend for password insertion
     if extension in ['zip', 'rar']:
-        #TODO set passwords via the db or passed in at runtime
-        passwords = ['infected']
-        for extracted_file in Extractor(f, passwords):
-            mimetype, extension = mime.search(extracted_file)
+        e = Extractor(f.data)
 
-            #save file off for later retrieval
-            #TODO move to datastore.py and dedup files by hash
-            file_id = datastore.store_file_data(extracted_file)
-            response.update({'resource': request_dict['resource'].filename , 'file_id':
-                str(file_id), 'resource_type': 'FILE', 'extension': extension})
-            datastore.insert('submissions', response)
-            response['plugins'] = get_plugin_options(p, ['File', 'File,URL'], extension)
+        if request_dict.get('passwords'):
+            files = e.extract(passwords=request_dict['passwords'])
+        else: 
+            files = e.extract()
+        
+        for extracted_file in files:
+            mimetype, extension = mime.search(extracted_file)
+            child_id = _submit_file(extracted_file, extracted_file.filename) 
+            #update orig submission with children
+            #TODO change this to a push, make sure update can handle that
+            datastore.update('submissions', parent_id, {"children": child_id})
+            response['plugins'] = plugin_manager.get_plugin_options(['file', 'file,url'], datastore, extension)
+            
     else:
-        file_id = datastore.store_file_data(f.data)
-        response.update({'resource': request_dict['resource'].filename, 'file_id':
-            str(file_id), 'resource_type': 'FILE', 'extension': extension})
-        datastore.insert('submissions', response)
-        response['plugins'] = get_plugin_options(p, ['File', 'File,URL'], extension)
+        #we dont want to try and find plugins for compressed files
+        response['plugins'] = plugin_manager.get_plugin_options(['file', 'file,url'], extension)
 
     return response 
 
-def get_plugin_options(pluginmanager, types, ext=None):
-    """ fetches all available plugins given a particular file/url """
-    options = {}
-
-    for plugin, config in pluginmanager.get_plugins():
-        if config['Core']['datatype'] in types:
-            #if we have a file deal with extension matching
-            if ext:
-                extensions = config['Core']['extensions'].split(',')
-                if ext not in extensions:
-                    continue
-
-            #not all plugins have options
-            try:
-                options[config['Core']['name']] = plugin.OPTIONS
-            except:
-                options[config['Core']['name']] = {}
-
-    return options

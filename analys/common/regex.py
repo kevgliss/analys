@@ -11,7 +11,8 @@
 import re
 
 def is_url(url):
-    """Validates URL addresses
+    """
+        Validates URL addresses
     """
     pattern = re.compile(r'''
            (?xim)
@@ -43,7 +44,8 @@ def is_url(url):
     return pattern.match(url) is not None
 
 def is_ipv4(ip):
-    """Validates IPv4 addresses.
+    """
+        Validates IPv4 addresses.
     """
     pattern = re.compile(r"""
         ^
@@ -82,7 +84,8 @@ def is_ipv4(ip):
     return pattern.match(ip) is not None
 
 def is_ipv6(ip):
-    """Validates IPv6 addresses.
+    """
+        Validates IPv6 addresses.
     """
     pattern = re.compile(r"""
         ^
@@ -113,7 +116,8 @@ def is_ipv6(ip):
     return pattern.match(ip) is not None
 
 def has_ipv4(ip):
-    """Validates IPv4 addresses.
+    """
+        Validates IPv4 addresses.
     """
     pattern = re.compile(r"""
         (?:

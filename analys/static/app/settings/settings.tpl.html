@@ -1,0 +1,104 @@
+<div class="row">
+	<div class="col-md-12">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                Archive Passwords
+            </div>
+            <div class="panel-body">
+                <p>These passwords will be used to attempt to brute force archived files that require a password.</p>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Password</th>
+                            <th> </th>
+                        </tr>
+                    </thead>
+                    <tbody>    
+                        <tr>
+                            <td><code>infected</code><td>
+                                    <td class="pull-right"><button class="btn btn-danger"><i class="fa fa-minus"></i></button></td>
+                        </tr>
+                        <tr>
+                            <td><code>infected</code><td>
+                                    <td class="pull-right"><button class="btn btn-danger"><i class="fa fa-minus"></i></button></td>
+                        </tr>
+                    </tbody>
+                </table>
+                <form class="form-inline" role="form">
+                    <div class="form-group">
+                    <input type="text" class="form-control" placeholder="Enter Password">
+                </div>
+                    <button class="btn btn-primary"><i class="fa fa-plus"></i> Add Password</button>
+            </form>    
+            </div>
+		</div>
+	</div>
+</div>
+<div class="row">
+	<div class="col-md-12">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                Mimetypes
+            </div>
+            <div class="panel-body">
+                <p>Below are the currently installed mimetype mappings that analys will attempt to process.</p>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Mimetype</th>
+                            <th>Extension</th>
+                            <th> </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><code>application/msword</code></td>
+                            <td><code>doc</code></td>
+                            <td class="pull-right"><button class="btn btn-danger"><i class="fa fa-minus"></i></button></td>
+                        </tr>
+                        <tr>
+                            <td><code>application/msword</code></td>
+                            <td><code>doc</code></td>
+                            <td class="pull-right"><button class="btn btn-danger"><i class="fa fa-minus"></i></button></td>
+                        </tr>
+                    </tbody>
+                </table>
+                <form class="form-inline" role="form">
+                    <div class="form-group">
+                        <input type="text" class="form-control" placeholder="Enter MimeType">
+                    </div>
+                    <div class="form-group">
+                        <input type="text" class="form-control" placeholder="Enter Extension">
+                    </div>        
+                    <button class="btn btn-primary"><i class="fa fa-plus"></i> Add Mapping</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row">
+	<div class="col-md-12">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                Plugins
+            </div>
+            <div class="panel-body">
+                <p>These are system wide plugin defaults, these will be superceded by any user defined plugin defaults.</p>
+                <div>
+                    <h3>Virustotal</h3>
+                    <form class="form-horizontal" role="form">
+                        <div class="form-group">
+                            <label for"field1" class="control-label">Field1</label>
+                            <input type="text" class="form-control" id="field1" placeholder="value1">
+                        </div>
+                        <div class="form-group">
+                            <label for"field2" class="control-label">Field2</label>
+                            <input type="text" class="form-control" id="field2" placeholder="value1">
+                        </div>
+                        <button class="btn btn-primary"><i class="fa fa-upload"></i> Update Defaults</button>
+                    </form>
+                </div>            
+            </div>    
+        </div>
+	</div>
+</div>

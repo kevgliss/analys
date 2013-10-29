@@ -15,51 +15,81 @@ from redis import Redis
 from analys import tasks
 from analys.datastore import Datastore
 
+
+log = logging.getLogger(__name__)
+
 class Plugin(object):
-    """ All analys plugins will inherit this object. It provide
-    functions necessary to fetch submission data as well as storing
-    plugin results.
+    """ 
+        All analys plugins will inherit this object. It provides
+        functions necessary to fetch submission data as well as store
+        plugin results.
     """
 
     def __init__(self, *args, **kwargs):
+        """
+            Allows for a plugin to bootstrap itself from a config
+
+        """
+        
         self.config = kwargs['config']
         self.analys_config = ConfigParser.RawConfigParser()
 
         try:
             self.analys_config.read(os.environ.get('ANALYS'))
         except:
-            logging.error("""No ANALYS enviromental variable not set 
+            log.error("""ANALYS enviromental variable not set 
                                 exiting...""")
-            sys.exit(1)
-       
+            raise
+
         self.resource_id = kwargs['resource_id']
         self.collection = kwargs['collection']
 
     def get_resource(self):
+        """
+            Returns:
+                resource (obj): The hydrated object
+
+        """
         datastore = self.get_datastore()
         return datastore.hydrate(self.resource_id, self.collection)
 
     def get_message_queue(self):
+        """
+            Returns:
+                redis (obj): A redis connection object
+
+        """
         return Redis(self.analys_config.get('server:message_queue', 'host'),
                 int(self.analys_config.get('server:message_queue', 'port')))
 
     def get_datastore(self):
+        """
+            Returns:
+                datastore (obj): A datastore connection object
+
+        """
         return Datastore(self.analys_config.get('server:datastore', 'host'),
                 int(self.analys_config.get('server:datastore', 'port')))
 
     #TODO add ability for plugins to pass valid status or have analys do it automatically
     def insert(self, data):
-        """ We leave the decision up to the plugin whether to write its
+        """ 
+            We leave the decision up to the plugin whether to write its
             results back to the analys datastore. There may be plugins that
             simply complete some action and does not have anything to 
             return.
-        """
+        
+            In the even that the plugin has nothing to return it should, at the
+            very least return it's runtime status.
 
+            Args:
+                data (dict): Dictionary returned by plugin
+
+        """
         datastore = self.get_datastore()
         result_id = datastore.insert(self.config['Core']['name'].lower(),
                 {'submission_id': self.resource_id, 'results': data})
 
-        
         #update the calling submission with result id and name of the task
         datastore.update("submissions", self.resource_id,
                 {"$push": 
@@ -67,7 +97,8 @@ class Plugin(object):
 
 
     def emit(self, task):
-        """ Plugins are able to 'emit' or create a new task when 
+        """ 
+            Plugins are able to 'emit' or create a new task when 
             they have finished their processing. In this way asyncronous
             tasks can be chained together to create a sequential list of tasks
             along a pipeline.
@@ -84,7 +115,7 @@ class Plugin(object):
             determination of malware. There are no additional IOCs to be found
             in such a result.
         
+            Args:
+                task (dict): Dictionary containing task data
         """
         create_tasks = tasks.create_async_tasks(self.get_datastore(), task, self.get_message_queue())
-
-    

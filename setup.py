@@ -49,7 +49,6 @@ setup(name='Analys',
 					  'python-magic',
 					  'requests',
 					  'docopt'],
-                      #'supervisor'],
     entry_points = """\
     [paste.app_factory]
     main = analys:main

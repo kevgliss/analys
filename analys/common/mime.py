@@ -1,5 +1,5 @@
 """
-.. module:: mimesfinder
+.. module:: mime
     :platform: Unix
     :synopsis: This module is a container module that holds
                all mime types that analys is able to handle
@@ -11,52 +11,27 @@
 
 import magic
 import zipfile
+import logging
 
-#TODO Store valid types in datastore
-ANALYS_TYPES = [('application/msword','doc'),
-            ('application/msword','doc'),
-            ('application/vnd.ms-office','doc'),
-            ('application/vnd.openxmlformats-officedocument.wordprocessingml.document','doc'),
-            ('application/vnd.openxmlformats-officedocument.wordprocessingml.template','doc'),
-            ('application/vnd.ms-word.document.macroEnabled.12','doc'),
-            ('application/vnd.ms-word.template.macroEnabled.12','doc'),
-            ('application/vnd.ms-excel','xls'),
-            ('application/vnd.openxmlformats-officedocument.spreadsheetml.sheet','xls'),
-            ('application/vnd.openxmlformats-officedocument.spreadsheetml.template','xlst'),
-            ('application/vnd.ms-excel.sheet.macroEnabled.12','xlsx'),
-            ('application/vnd.ms-excel.template.macroEnabled.12','exlsxt'),
-            ('application/vnd.ms-excel.addin.macroEnabled.12','xlsx'),
-            ('application/vnd.ms-excel.sheet.binary.macroEnabled.12','xlsx'),
-            ('application/vnd.ms-powerpoint','ppt'),
-            ('application/vnd.openxmlformats-officedocument.presentationml.presentation','ppt'),
-            ('application/vnd.openxmlformats-officedocument.presentationml.template','pptt'),
-            ('application/vnd.openxmlformats-officedocument.presentationml.slideshow','ppt'),
-            ('application/vnd.ms-powerpoint.addin.macroEnabled.12','pptx'),
-            ('application/vnd.ms-powerpoint.presentation.macroEnabled.12','pptx'),
-            ('application/vnd.ms-powerpoint.template.macroEnabled.12','pptx'),
-            ('application/vnd.ms-powerpoint.slideshow.macroEnabled.12','pptx'),
-            ('text/rtf', 'rtf'),
-            ('application/exe', 'exe'),
-            ('application/x-dosexec', 'exe'),
-            ('application/x-executable', 'exe'),
-            ('application/pdf','pdf'),
-            ('application/swf', 'swf'),
-            ('application/x-shockwave-flash','swf'),
-            ('text/javascript', 'js'),
-            ('application/x-jar', 'jar'),
-            ('application/x-java-applet', 'jar'),
-            ('application/vnd.android.package-archive', 'apk'),
-            ('application/zip', 'zip'),
-            ('application/x-rar', 'rar'),
-            ('text/html', 'html'),
-            ('text/plain', 'html')]
+from analys.common.settings import Settings
+
+from analys.exceptions import InvalidMimeType
+
+log = logging.getLogger(__name__)
 
 #These are binary types use magic to guess
 MAGIC_TYPES = [('Zip archive data', 'application/zip'),
                ('MS Windows HtmlHelp Data', 'text/html')]
 
+#TODO Store valid types in datastore/config
+#TODO finish unit test
+def get_file_types():
+    s = Settings(datastore)
+    return s.get_mimetype_mappings()
+
 def search(file):
-    """ Search attempt to identify a filetype category for a
+    """ 
+        Search attempt to identify a filetype category for a
         particular file. It uses a list of known mime types and a
         files magic byte to make that determination.
 
@@ -64,9 +39,11 @@ def search(file):
         that it will peek inside zip files and try to determine the
         type of file contained within
 
-        :param data: raw file bytes
-        :type data: byte string
+        Args:
+            file (str): raw file bytes
 
+        Returns:
+            tuple (str, str): Mime and extensions of a given byte string
     """
     def _peek_compressed(file):
         tmpfile = file.create_temp_file()
@@ -88,11 +65,12 @@ def search(file):
             if app == guess:
                 mime = valid_mime
 
-    for analys_mime, extension in ANALYS_TYPES:
+    for analys_mime, extension in get_file_types():
         if mime in analys_mime:
             if extension == 'zip':
                 extension = _peek_compressed(file)
                 return (mime, extension)
             else:
                 return (mime, extension)
-    return (None, None)
+    log.info("Invalid mimetype: {}".format(mime))
+    raise InvalidMimeType

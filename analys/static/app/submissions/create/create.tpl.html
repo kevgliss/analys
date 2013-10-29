@@ -21,7 +21,7 @@
                     <div class="col-lg-10">
                         <input type="text" class="form-control" ng-model-instant placeholder="www.evil.com, www.evil1.com" id="urlToUpload" multiple onchange="angular.element(this).scope().setUrls(this)" />
                     </div>
-                    <button class='btn btn-primary' ng-click="addUrls()"><i class="icon-circle-arrow-right"></i></button>
+                    <button class='btn btn-primary' ng-click="addUrls()"><i class="fa fa-arrow-circle-o-right"></i></button>
                 </div>
             </div>
             
@@ -55,11 +55,11 @@
                     <tr ng-repeat="submission in submissions">
                         <td><span><ul class="list-unstyled"><li>{{submission.resource}}</li><li class="small muted">{{submission.type}}</li></ul></span><td>
                                 <td>{{ submission.size }}</td>        
-                        <td class="pull-right"><button class='btn' ng-click="removeSubmission($index)"><i class="icon-remove"></i></button></td>
+                        <td class="pull-right"><button class='btn btn-danger' ng-click="removeSubmission($index)"><i class="fa fa-minus"></i></button></td>
                     </tr>
                     </table>
                     <div file-button>
-                        <button class='btn btn-success btn-large col-lg-12' ng-click="uploadSubmission()"><i class="icon-cloud-upload"> Upload</i></button>
+                        <button class='btn btn-success btn-large col-lg-12' ng-click="uploadSubmission()"><i class="fa fa-upload"> Upload</i></button>
                     </div>
                 </div>
             </div>
@@ -92,7 +92,7 @@
                          </tr>
                     </table>
                 </div>
-                <button class='btn btn-success btn-large col-lg-12' ng-click="createTasks()"><i class="icon-beaker"></i> Create Tasks</i></button>
+                <button class='btn btn-success btn-large col-lg-12' ng-click="createTasks()"><i class="fa fa-crosshairs"></i> Create Tasks</i></button>
             </div>
         </div>
         </div> 

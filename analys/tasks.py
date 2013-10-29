@@ -14,14 +14,25 @@
 import logging
 import datastore
 from rq import Queue
-from analys.common import utils
 from analys.plugins.pluginmanager import PluginManager
 
 log = logging.getLogger(__name__)
 
 def create_async_tasks(datastore, task, message_queue, priority='low'):
-    """ this function uses the persisted submission document to
-        create the required async tasks
+    """ 
+        This function uses the persisted submission document to create the 
+        required async tasks
+
+        Args:
+            datastore (obj): Object containing datastore connection/functions
+            task (dict): Dictionary containing task information
+            message_queue (obj): Object containing message_queue connection/fucntions
+
+        Kwargs:
+            priority (str): Priority of task
+
+        Returns:
+            jobs (list): List of created jobs
     """
     log.debug("Creating async tasks...")
     q = Queue(connection=message_queue, async=False) # no args implies default queue
@@ -31,7 +42,8 @@ def create_async_tasks(datastore, task, message_queue, priority='low'):
     pm.load_plugins(['static'])
 
     extension = datastore.get_document_by_id('submissions', task['submission_id'])['extension']
-    #TODO get set timeouts via the plugin config
+    
+    #TODO set timeouts via the plugin config
     jobs = []
     for plugin, config in pm.get_plugins():
         #ignore plugins that dont work with this resource type

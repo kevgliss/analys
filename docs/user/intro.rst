@@ -1,5 +1,8 @@
-Analys
-======
+.. _introduction:
+
+Introduction
+============
+
 Malware impact assessment and orchestration tool.
 
 The malware tool space as begun to develop very rapidly in
@@ -21,14 +24,23 @@ With that said it is important to realize that Analys does little to
 no actual malware processing/correlation itself. Instead it relies on plugins
 that allow each individual to customize it to their specific workflow/environment.
 
+Philosophy
+----------
+
+Analys was developed to power back to analysts looking to streamline
+their malware analysis. It should not have any unbreakable or deep dependencies 
+of third-party or close security tools.
+
+.. _`apache2`:
+
 Goals
 ----
--It should provide allow itself to be configured for a specific environment.
+- It should provide allow itself to be configured for a specific environment.
 
--It should provide entry points that allow both the ingestion and exportation of data.
+- It should provide entry points that allow both the ingestion and exportation of data.
 Information wants to be free.
 
--It should not do any actual analysis itself. It should present data from it's
+- It should not do any actual analysis itself. It should present data from it's
 plugins in a clean and logical way, and get out of the analysts way.
 
 Plugins
@@ -67,3 +79,28 @@ Running Analys on Windows will not be supported. Feel free to fork if you have r
 Each plugin will have additional dependencies/environmental needs
 Before installing a plugin ensure it's tests pass.
 
+
+Apache2 License
+---------------
+
+A large number of open source projects you find today are `GPL Licensed`_.
+While the GPL has its time and place, it should most certainly not be your
+go-to license for your next open source project.
+
+A project that is released as GPL cannot be used in any commercial product
+without the product itself also being offered as open source.
+
+The MIT, BSD, ISC, and Apache2 licenses are great alternatives to the GPL
+that allow your open-source software to be used freely in proprietary,
+closed-source software.
+
+Analys is released under terms of `Apache2 License`_.
+
+.. _`GPL Licensed`: http://www.opensource.org/licenses/gpl-license.php
+.. _`Apache2 License`: http://opensource.org/licenses/Apache-2.0
+
+
+Analys License
+----------------
+
+    .. include:: ../../LICENSE

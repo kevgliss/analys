@@ -11,8 +11,8 @@
         <meta name="description" content="analys: malware">
         <meta name="viewport" content="width=device-width">
         <link href="//netdna.bootstrapcdn.com/bootswatch/3.0.0/flatly/bootstrap.min.css" rel="stylesheet">
-        <link href="//netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.min.css" rel="stylesheet">
-        
+        <link href="//netdna.bootstrapcdn.com/font-awesome/4.0.0/css/font-awesome.css" rel="stylesheet">
+
         <script src="//cdnjs.cloudflare.com/ajax/libs/underscore.js/1.4.4/underscore-min.js"></script>
         <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script> 
         <script src="//netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js"></script> 
@@ -30,7 +30,7 @@
         <script src="/static/app/search/search.js"></script>
         <script src="/static/app/plugins/plugins.js"></script>
         <script src="/static/app/users/users.js"></script>
-        <script src="/static/app/preferences/preferences.js"></script>
+        <script src="/static/app/settings/settings.js"></script>
         <script src="/static/app/auth/auth.js"></script>  
 
         <!-- Le HTML5 shim, for IE6-8 support of HTML5 elements -->
@@ -88,9 +88,9 @@
               <li class="dropdown">
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown">Kevin <b class="caret"></b></a>
                 <ul class="dropdown-menu">
-                    <li ui-route="/preferences/" ng-class="{active:$uiRoute}"><a href="#/preferences">Preferences</a></li>
-                  <li class="divider"></li>
                   <li ui-route="/plugins/" ng-class="{active:$uiRoute}"><a href="#/plugins">Plugin Settings</a></li>
+                  <li class="divider"></li>
+                  <li ui-route="/settings/" ng-class="{active:$uiRoute}"><a href="#/settings">Analys Settings</a></li>
                   <li ui-route="/users/" ng-class="{active:$uiRoute}"><a href="#/users">User Accounts</a></li>
                 </ul>
               </li>

@@ -12,7 +12,7 @@
  * The dependencies block here is also where component dependencies should be
  * specified, as shown below.
  */
-angular.module( 'analys.preferences', [
+angular.module( 'analys.settings', [
 ])
 
 /**
@@ -21,16 +21,16 @@ angular.module( 'analys.preferences', [
  * this way makes each module more "self-contained".
  */
 .config(function config( $routeProvider ) {
-  $routeProvider.when( '/preferences', {
-    controller: 'PreferencesCtrl',
-    templateUrl: '/static/app/preferences/preferences.tpl.html'
+  $routeProvider.when( '/settings', {
+    controller: 'settingsCtrl',
+    templateUrl: '/static/app/settings/settings.tpl.html'
   });
 })
 
 /**
  * And of course we define a controller for our route.
  */
-.controller( 'PreferencesCtrl', function PreferencesController( $scope ) {
+.controller( 'settingsCtrl', function PreferencesController( $scope ) {
 })
 
 ;
