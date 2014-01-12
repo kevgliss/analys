@@ -23,7 +23,7 @@ var analys = angular.module( 'analys', [
 })
 
 analys.service('messageService', function(){
-    var messages = []
+    var messages = [];
     this.addMessage = function(message){
         switch(message['type']){
             case "error":
