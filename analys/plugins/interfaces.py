@@ -15,15 +15,45 @@ from urlparse import urlparse
 from analys.common import regex
 from analys.common.mime import search as mime_search
 
+#TODO be able to hydrate dynamically
+def hydrate(self, resource_id, collection):
+    result = self.get_document_by_id(collection, resource_id)
+    if not result:
+        log.error("Could not find resource: resource_id={}".format(resource_id))
+        raise ResourceNotFound
+
+    if result['resource_type'].lower() in 'URL'.lower():
+        resource = URL(result['resource'])
+        
+    elif result['resource_type'].lower() in 'FILE'.lower():
+        # fetch the actual data from the file store
+        data = self.get_file_data(result['file_id'])
+        resource = File(result['resource'], data)
+    
+    elif result['resource_type'] in 'ANALYSIS':
+        resource = Analysis(data)
+    else:
+        log.error("Invalid resource type: resource_id={}".format(resource_id))
+        raise InvalidResourceType
+
+    return resource
+
+
+
 class File(object):
     """ 
         Plugins for this class analyze Files 
         
     """
-    def __init__(self, filename, data):
-        self.name = filename
-        self.data = data
-        self.path = None
+    def __init__(self, resource_id, collection, datastore):
+        self.datastore = datastore
+        result = datastore.get_document_by_id(collection, resource_id)
+        if not result:
+            log.error("Could not find resource: resource_id={}".format(resource_id))
+            raise ResourceNotFound
+
+        self.data = datastore.get_file_data(result['file_id'])
+        self.name = result['resource']
 
     def create_temp_file(self):
         """ 
@@ -64,7 +94,7 @@ class File(object):
         return s.hexdigest()
 
     def extension(self):
-        s = mime_search(self)
+        s = mime_search(self.datastore)
         return s
 
 
@@ -73,8 +103,14 @@ class URL(object):
         Plugins for this class analyze URLs 
         
     """
-    def __init__(self, url):
-        self.url = self.deobfuscate(url)
+    def __init__(self, resource_id, collection, datastore):
+        result = datastore.get_document_by_id(collection, resource_id)
+        if not result:
+            log.error("Could not find resource: resource_id={}".format(resource_id))
+            raise ResourceNotFound
+
+        self.data = datastore.get_file_data(result['file_id'])
+        self.url = self.deobfuscate(result['resource'])
 
     def get_url_parts(self):
         return urlparse(self.url)

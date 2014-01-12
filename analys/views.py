@@ -8,6 +8,7 @@
 .. moduleauthor:: Kevin Glisson <kevin.glisson@gmail.com>
 
 """
+import os
 import sys
 import logging
 
@@ -20,7 +21,6 @@ from bson.json_util import loads, dumps
 from analys import tasks
 from analys import datastore
 from analys.create import url_submission, file_submission
-from analys.common.settings import Settings
 
 log = logging.getLogger(__name__)
 
@@ -32,9 +32,9 @@ class App(object):
         self.request = request
 
     def get(self):
-        #TODO shouldnt be hardcoded
+        cwd = os.path.dirname(os.path.realpath(__file__))
         response = FileResponse(
-                '/Users/kglisson/Documents/Code/Python/analysenv/Analys/analys/templates/index.html',
+                os.path.join(cwd, 'templates', 'index.html'),
                 request=self.request,
                 )
         return response
@@ -104,9 +104,13 @@ class Submissions(object):
         
         '''
         if hasattr(self.request.POST['resource'], 'filename'):
-            return dumps(file_submission(self.request.POST, self.request.datastore, self.plugin_manager))
+            return dumps(file_submission(self.request.POST,
+                                         self.request.datastore,
+                                         self.request.plugin_manager))
         else:  
-            return dumps(url_submission(self.request.POST, self.request.datastore, self.plugin_manager))
+            return dumps(url_submission(self.request.POST,
+                                        self.request.datastore,
+                                        self.request.plugin_manager))
 
         self.request.response.status = 404 
         return dumps({'type':'error',
@@ -363,7 +367,6 @@ class Settings(object):
     """ Defines the 'settings' api"""
     def __init__(self, request):
         self.request = request
-        self.settings = Settings(self.request.datastore)
 
     def get(self):
         '''
@@ -400,13 +403,13 @@ class Settings(object):
         
         setting_type = self.request.matchdict['type']
         if 'passwords' in setting_type:
-            results = dumps(self.settings.get_compressed_passwords())
+            results = dumps(self.request.settings.get_compressed_passwords())
         
         elif 'plugin' in setting_type:
-            results = dumps(self.settings.get_all_plugin_default_settings())
+            results = dumps(self.request.settings.get_all_plugin_default_settings())
         
         elif 'mimetype' in setting_type:
-            results = dumps(self.settings.get_mimetype_mappings())
+            results = dumps(self.request.settings.get_mimetype_mappings())
 
         else:
             self.request.response.status = 404
@@ -462,13 +465,13 @@ class Settings(object):
         '''
         setting_type = self.request.matchdict['type']
         if 'passwords' in setting_type:
-            results = dumps(self.settings.get_compressed_passwords())
+            results = dumps(self.request.settings.get_compressed_passwords())
         
         elif 'plugin' in setting_type:
-            results = dumps(self.settings.get_all_plugin_default_settings())
+            results = dumps(self.request.settings.get_all_plugin_default_settings())
         
         elif 'mimetype' in setting_type:
-            results = dumps(self.settings.get_mimetype_mappings())
+            results = dumps(self.request.settings.get_mimetype_mappings())
 
         else:
             self.request.response.status = 404
@@ -511,13 +514,13 @@ class Settings(object):
         setting_type = self.request.matchdict['type']
         value = self.request.matchdict['value']
         if 'passwords' in setting_type:
-            self.settings.remove_compressed_password(value)
+            self.request.settings.remove_compressed_password(value)
         
         elif 'plugin' in setting_type:
-            self.settings.get_all_plugin_default_settings(value)
+            self.request.settings.get_all_plugin_default_settings(value)
         
         elif 'mimetype' in setting_type:
-            self.settings.get_mimetype_mappings(value)
+            self.request.settings.get_mimetype_mappings(value)
 
         else:
             self.request.response.status = 404

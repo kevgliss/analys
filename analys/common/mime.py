@@ -14,8 +14,8 @@ import zipfile
 import logging
 
 from analys.common.settings import Settings
-
 from analys.exceptions import InvalidMimeType
+from analys.common.utils import get_datastore
 
 log = logging.getLogger(__name__)
 
@@ -26,7 +26,7 @@ MAGIC_TYPES = [('Zip archive data', 'application/zip'),
 #TODO Store valid types in datastore/config
 #TODO finish unit test
 def get_file_types():
-    s = Settings(datastore)
+    s = Settings(get_datastore())
     return s.get_mimetype_mappings()
 
 def search(file):

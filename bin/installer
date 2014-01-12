@@ -126,7 +126,7 @@ def install():
 
     print subprocess.check_output(["mkdir", "-p", "{}analys".format(install_config['install_dir'])])
 
-    os.system("cp -r * {}analys".format(install_config['install_dir']))
+    os.system("cp -r ../* {}analys".format(install_config['install_dir']))
 
     if subprocess.call(["python", "{}analys/setup.py".format(install_config['install_dir']), "install"]) == 0:
         print "[+] Analys has been successfully installed"
@@ -173,6 +173,7 @@ def install():
                 ('application/x-rar', 'rar'),
                 ('text/html', 'html'),
                 ('text/plain', 'html')]
+
     
 def remove():
     pass
