@@ -18,7 +18,7 @@ class Settings(object):
     """
     def __init__(self, datastore):
         self.datastore = datastore
-    
+
     def get_compressed_passwords(self, user):
         """
             Gets all possible compression passwords

@@ -30,8 +30,17 @@ angular.module( 'analys.settings', [
 /**
  * And of course we define a controller for our route.
  */
-.controller( 'settingsCtrl', function PreferencesController( $scope ) {
-})
+.controller( 'settingsCtrl', function SettingsController( $scope, $http, messageService ) {
+    return $http.get('/1/settings/passwords').success(function(res) {
+        $scope.passwords = res;
+    });
 
-;
+    return $http.get('/1/settings/mimetypes').success(function(res) {
+        $scope.mimetypes = res;
+    });
+
+    return $http.get('/1/settings/plugins').success(function(res) {
+        $scope.plugins = res;
+    });
+});
 

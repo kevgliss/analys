@@ -1,4 +1,4 @@
-<div class="row">
+<div class="row" ng-controller="SettingsController">
 	<div class="col-md-12">
         <div class="panel panel-default">
             <div class="panel-heading">
@@ -6,7 +6,7 @@
             </div>
             <div class="panel-body">
                 <p>These passwords will be used to attempt to brute force archived files that require a password.</p>
-                <table class="table">
+                <table  class="table">
                     <thead>
                         <tr>
                             <th>Password</th>
@@ -14,14 +14,11 @@
                         </tr>
                     </thead>
                     <tbody>    
-                        <tr>
-                            <td><code>infected</code><td>
-                                    <td class="pull-right"><button class="btn btn-danger"><i class="fa fa-minus"></i></button></td>
+                        <tr ng-repeat="pass in passwords">
+                            <td><code>{{ pass }}</code><td>
+                            <td class="pull-right"><button class="btn btn-danger"><i class="fa fa-minus"></i></button></td>
                         </tr>
-                        <tr>
-                            <td><code>infected</code><td>
-                                    <td class="pull-right"><button class="btn btn-danger"><i class="fa fa-minus"></i></button></td>
-                        </tr>
+                        <tr ng-show="!passwords.length"><td>No passwords are currently set.<td></tr>
                     </tbody>
                 </table>
                 <form class="form-inline" role="form">
@@ -51,16 +48,12 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr>
-                            <td><code>application/msword</code></td>
-                            <td><code>doc</code></td>
+                        <tr ng-repeat="type in mimetypes">
+                            <td><code>{{ type.mimetype }}</code></td>
+                            <td><code>{{ type.extension }}</code></td>
                             <td class="pull-right"><button class="btn btn-danger"><i class="fa fa-minus"></i></button></td>
                         </tr>
-                        <tr>
-                            <td><code>application/msword</code></td>
-                            <td><code>doc</code></td>
-                            <td class="pull-right"><button class="btn btn-danger"><i class="fa fa-minus"></i></button></td>
-                        </tr>
+                        <tr ng-show="!mimetypes.length"><td>No mimetypes are currently set.<td></tr>
                     </tbody>
                 </table>
                 <form class="form-inline" role="form">

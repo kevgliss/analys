@@ -363,9 +363,8 @@ class Settings(object):
     """ Defines the 'settings' api"""
     def __init__(self, request):
         self.request = request
-        self.settings = Settings(self.request.datastore)
 
-    def get(self):
+    def collection_get(self):
         '''
            .. http:get:: /1/settings/{type}
 
@@ -397,7 +396,6 @@ class Settings(object):
            :statuscode 404: invalid setting type
            :statuscode 404: settings not found
         '''
-        
         setting_type = self.request.matchdict['type']
         if 'passwords' in setting_type:
             results = dumps(self.settings.get_compressed_passwords())

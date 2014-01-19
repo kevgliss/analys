@@ -23,12 +23,6 @@ log = logging.getLogger(__name__)
 MAGIC_TYPES = [('Zip archive data', 'application/zip'),
                ('MS Windows HtmlHelp Data', 'text/html')]
 
-#TODO Store valid types in datastore/config
-#TODO finish unit test
-def get_file_types():
-    s = Settings(datastore)
-    return s.get_mimetype_mappings()
-
 def search(file):
     """ 
         Search attempt to identify a filetype category for a
