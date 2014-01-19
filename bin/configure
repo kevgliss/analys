@@ -1,0 +1,204 @@
+#!/usr/bin/env python
+import os
+import sys
+import platform
+import subprocess
+
+from analys.datastore import Datastore
+from analys.common.settings import Settings
+
+def install():
+    install_config = {'install_dir': '/opt/',
+                      'mongodb': {'hostname': '127.0.0.1', 'port': 27017},
+                      'redis': {'hostname': '127.0.0.1', 'port': '6376'}}
+    
+
+    print '''
+                  ______                       __                     
+                 /      \                     |  \                    
+                |  $$$$$$\ _______    ______  | $$ __    __   _______ 
+                | $$__| $$|       \  |      \ | $$|  \  |  \ /       \
+                | $$    $$| $$$$$$$\  \$$$$$$\| $$| $$  | $$|  $$$$$$$
+                | $$$$$$$$| $$  | $$ /      $$| $$| $$  | $$ \$$    \ 
+                | $$  | $$| $$  | $$|  $$$$$$$| $$| $$__/ $$ _\$$$$$$\
+                | $$  | $$| $$  | $$ \$$    $$| $$ \$$    $$|       $$
+                 \$$   \$$ \$$   \$$  \$$$$$$$ \$$ _\$$$$$$$ \$$$$$$$ 
+                                                  |  \__| $$          
+                                                   \$$    $$          
+                                                    \$$$$$$           
+        '''
+
+    print 'Welcome to Analys we will first get started by asking for some information.\n'
+
+    install_path = raw_input('Where would you like to install Analys? Must be full path. ({}): '.format(
+                                                                    install_config['install_dir']))
+
+    if install_path != '':
+        if install_path.endswith('/'):
+            install_config['install_dir'] = install_path
+        else:
+            install_config['install_dir'] = install_path + '/'
+    #try to guess what we are about to install on
+    env = platform.system()
+    if env in 'Darwin':
+        if subprocess.call(["which", "brew"]) == 1:
+            brew = raw_input("[+] Analys uses the homebrew package manager to install dependencies on OSX. Install it now? (Y/n)")
+            if brew.lower() in 'y':
+                os.system('ruby -e "$(curl -fsSL https://raw.github.com/mxcl/homebrew/go)"')
+            else:
+                sys.exit(1)
+        print "[+] Updating homebrew..." 
+        subprocess.call(["brew", "update"])
+    
+    mongodb = raw_input('[+] Would you like to try and install mongodb on this system? (Y/n)')
+    if 'n' in mongodb.lower():
+        while True:
+            hostname = raw_input('[+] What is the hostname of your mongodb instance or replicaset? ({})'.format(
+                                                                            install_config['mongodb']['hostname']))
+            if hostname != '':
+                install_config['mongodb']['hostname'] = hostname
+                
+            port = raw_input('[+] What port is mongodb running on? ({})'.format(install_config['mongodb']['port']))
+            
+            if port != '':
+                install_config['mongodb']['port'] = port
+            
+            print "[+] Attempting to contact the specified host..."
+
+            if True:
+                print "[+] Success!"
+                break
+            
+            again = raw_input("[-] Could not contact host, are you sure the information is correct? (y/N)")
+            if again.lower() in 'n':
+                break
+    else:
+        if env in 'Darwin':
+            if subprocess.call(["which", "mongo"]) == 1:
+                if subprocess.call(["brew", "install","mongodb"]) == 0:
+                    print "[+] Mongodb installed"
+                else:
+                    print "[-] Mongodb installation failed"
+            else:
+                print "[+] Mongodb is already installed"
+
+        elif os in 'Debian':
+            pass
+
+    redis = raw_input('[+] Would you like to try and install redis on this system? (Y/n)')
+
+
+    if 'n' in redis.lower():
+        while True:
+
+            hostname = raw_input('[+] What is the hostname of your redis instance? ({})'.format(
+                                                                            install_config['redis']['hostname']))
+            if hostname != '':
+                install_config['redis']['hostname'] = hostname
+
+            port = raw_input('[+] What port is redis running on? ({})'.format(install_config['redis']['port']))
+            
+            if port != '':
+                install_config['redis']['port'] = port
+            
+            print "[+] Attempting to contact the specified host..."
+        
+            if True: 
+                print "[+] Success!"
+                break
+
+            again = raw_input("[-] Could not contact host, are you sure the information is correct? (y/N)")
+            if again.lower() in 'n':
+                break
+    
+    #list included plugins
+    else: 
+        if env in 'Darwin':
+            if subprocess.call(["which", "redis-server"]) == 1:
+                if subprocess.call(["brew", "install", "redis"]) == 0:
+                    print "[+] Redis installed"
+                else:
+                    print "[-] Redis installation failed"
+            else:
+                print "[+] Redis already installed"
+         
+        elif os in 'Debian':
+            pass
+    
+    print "[+] Installing Analys into {}".format(install_config['install_dir'])
+
+    print subprocess.check_output(["mkdir", "-p", "{}analys".format(install_config['install_dir'])])
+
+    os.system("cp -r ../* {}analys".format(install_config['install_dir']))
+
+    print "[+] Populating datastore with default settings"
+
+    
+    mimetypes = [('application/msword','doc'),
+                ('application/msword','doc'),
+                ('application/vnd.ms-office','doc'),
+                ('application/vnd.openxmlformats-officedocument.wordprocessingml.document','doc'),
+                ('application/vnd.openxmlformats-officedocument.wordprocessingml.template','doc'),
+                ('application/vnd.ms-word.document.macroEnabled.12','doc'),
+                ('application/vnd.ms-word.template.macroEnabled.12','doc'),
+                ('application/vnd.ms-excel','xls'),
+                ('application/vnd.openxmlformats-officedocument.spreadsheetml.sheet','xls'),
+                ('application/vnd.openxmlformats-officedocument.spreadsheetml.template','xlst'),
+                ('application/vnd.ms-excel.sheet.macroEnabled.12','xlsx'),
+                ('application/vnd.ms-excel.template.macroEnabled.12','exlsxt'),
+                ('application/vnd.ms-excel.addin.macroEnabled.12','xlsx'),
+                ('application/vnd.ms-excel.sheet.binary.macroEnabled.12','xlsx'),
+                ('application/vnd.ms-powerpoint','ppt'),
+                ('application/vnd.openxmlformats-officedocument.presentationml.presentation','ppt'),
+                ('application/vnd.openxmlformats-officedocument.presentationml.template','pptt'),
+                ('application/vnd.openxmlformats-officedocument.presentationml.slideshow','ppt'),
+                ('application/vnd.ms-powerpoint.addin.macroEnabled.12','pptx'),
+                ('application/vnd.ms-powerpoint.presentation.macroEnabled.12','pptx'),
+                ('application/vnd.ms-powerpoint.template.macroEnabled.12','pptx'),
+                ('application/vnd.ms-powerpoint.slideshow.macroEnabled.12','pptx'),
+                ('text/rtf', 'rtf'),
+                ('application/exe', 'exe'),
+                ('application/x-dosexec', 'exe'),
+                ('application/x-executable', 'exe'),
+                ('application/pdf','pdf'),
+                ('application/swf', 'swf'),
+                ('application/x-shockwave-flash','swf'),
+                ('text/javascript', 'js'),
+                ('application/x-jar', 'jar'),
+                ('application/x-java-applet', 'jar'),
+                ('application/vnd.android.package-archive', 'apk'),
+                ('application/zip', 'zip'),
+                ('application/x-rar', 'rar'),
+                ('text/html', 'html'),
+                ('text/plain', 'html')]
+
+
+    d = Datastore(install_config['mongodb']['hostname'], 
+                  install_config['mongodb']['port'])
+    s = Settings(d)
+    
+    print "[+] Adding defualt mimetypes..."
+    for x in mimetypes:
+        print x
+    
+    s.create_mimetype_mappings(mimetypes)
+
+    passwords = ['password', 'infected']
+    
+    print "[+] Adding compressed passwords..."
+    for x in passwords:
+        print x
+    
+    s.create_compressed_passwords(passwords)
+
+def uninstall():
+    pass
+
+if __name__ == '__main__':
+    arg = sys.argv[1]
+    if 'install' in arg:
+        install()
+    elif 'remove' in arg:
+        remove()
+
+
