@@ -14,14 +14,18 @@ import zipfile
 import logging
 
 from analys.common.settings import Settings
-
 from analys.exceptions import InvalidMimeType
+from analys.common.utils import get_datastore
 
 log = logging.getLogger(__name__)
 
 #These are binary types use magic to guess
 MAGIC_TYPES = [('Zip archive data', 'application/zip'),
                ('MS Windows HtmlHelp Data', 'text/html')]
+
+def get_file_types():
+    s = Settings(get_datastore())
+    return s.get_mimetype_mappings()
 
 def search(file):
     """ 

@@ -6,10 +6,13 @@ Analys needs the following in order function:
 + Redis
 + MongoDB
 
+Clone Analys into the newly created virtualenv:
+    git clone https://github.com/kevgliss/analys.git
+
 The easiest way to get a installation of Analys up and running
 is to run the install script and answer all configuration questions.
 
-    ./analys install
+    python installer install
 
 At its core Analys is a simple python modules, if you already have mongodb
 and redis servers setup on different machines you can also run the install 
@@ -17,9 +20,6 @@ and redis servers setup on different machines you can also run the install
 
 Make a new virtualenv anywhere you would like:
     virtualenv Analys
-
-Clone Analys into the newly created virtualenv:
-    git clone #TODO add github url
 
 Install the project into the virutalenv:
     source Analys/bin/activate

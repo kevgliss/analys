@@ -64,7 +64,7 @@ class Settings(object):
                 
                 return passwords        
 
-    def get_mimetype_mappings(self, user):
+    def get_mimetype_mappings(self, user='kglisson'):
         """
             Return all of the currently active mimetype mappings
         """

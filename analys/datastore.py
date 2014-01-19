@@ -17,7 +17,6 @@ from pymongo import Connection
 from pymongo import MongoReplicaSetClient
 from pymongo.collection import Collection
 
-from analys.plugins.interfaces import File, URL
 from analys.exceptions import ResourceNotFound, InvalidResourceType
 
 log = logging.getLogger(__name__)
@@ -84,51 +83,6 @@ class Datastore(object):
         """
         conn = self.connect()
         return gridfs.GridFS(conn.files).get(ObjectId(file_id)).read()
-
-    #TODO be able to hydrate dynamically
-    def hydrate(self, resource_id, collection):
-        """ 
-            Return a resource object filled with data
-
-            This function is called by all plugin modules and ensures that 
-            submission data is available to the module in object form.
-            
-            Args:
-                resource_id (str): A string representing a resource
-                collection (str): A string with which collection to use
-        
-            
-            Returns:
-                resource (obj): A resource object initialized with resource_id
-                    data
-
-            Exceptions:
-                ResourceNotFound (AnalysException): Could not find
-                    the resource request in the datastore
-                InvalidResourceType (AnalysException): Found an illegal
-                    resource type
-                
-        """
-        result = self.get_document_by_id(collection, resource_id)
-        if not result:
-            log.error("Could not find resource: resource_id={}".format(resource_id))
-            raise ResourceNotFound
-
-        if result['resource_type'].lower() in 'URL'.lower():
-            resource = URL(result['resource'])
-            
-        elif result['resource_type'].lower() in 'FILE'.lower():
-            # fetch the actual data from the file store
-            data = self.get_file_data(result['file_id'])
-            resource = File(result['resource'], data)
-        
-        elif result['resource_type'] in 'ANALYSIS':
-            resource = Analysis(data)
-        else:
-            log.error("Invalid resource type: resource_id={}".format(resource_id))
-            raise InvalidResourceType
-
-        return resource
 
     #TODO implement pagination
     def get_all_documents(self, collection, start=None, stop=None):

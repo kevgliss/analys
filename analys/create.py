@@ -70,19 +70,19 @@ def file_submission(request_dict, datastore, plugin_manager):
         file_response = {'resource': filename,
                          'file_id': file_id, 
                          'resource_type': 'FILE', 
-                         'extension': extension}
+                         'extension': filename.split('.')[-1]} # TODO: Hack in order to remove deadlock a couple lines below
         if parent:
              file_response.update({"parent": parent})
         
-        submission_id = datastore.insert('submissions', file_response)
-    
+        return datastore.insert('submissions', file_response)
+
     response = {}
     response['owner'] = request_dict['owner']
+
+    parent_id = _submit_file(request_dict['resource'].file.read(), request_dict['resource'].filename)
     
-    f = File(request_dict['resource'].filename, request_dict['resource'].file.read())
+    f = File(parent_id, 'submissions', datastore)
     mimetype, extension = mime.search(f)
-   
-    parent_id = _submit_file(f.data, request_dict['resource'].filename)
 
     #TODO create frontend for password insertion
     if extension in ['zip', 'rar']:

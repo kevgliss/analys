@@ -18,6 +18,9 @@ def main(global_config, **settings):
 
     ds = Datastore(settings['datastore.host'], settings['datastore.port'])
     config.registry.settings['datastore'] = ds
+
+    # s = Settings(ds)
+    # config.registry.settings['settings'] = s
     
     redis = Redis(settings['message_queue.host'], int(settings['message_queue.port']))
     config.registry.settings['message_queue'] = redis
@@ -33,6 +36,7 @@ def main(global_config, **settings):
         event.request.datastore = settings['datastore']
         event.request.plugin_manager = settings['plugin_manager']
         event.request.message_queue = settings['message_queue']
+        # event.request.settings = settings['settings']
 
     config.add_subscriber(add_app_objects, NewRequest)
 
