@@ -38,11 +38,14 @@ class Bluecoat(object):
 
     def submit(self):
         rating = None
-        response = requests.get('http://sitereview.bluecoat.com/rest/categorization?url={}'.format(self.url)).json()
-        soup = BeautifulSoup(response['categorization'])
-        for a in soup.findAll('a', href=True):
-            if "javascript" in a['href']:
-                rating = a.contents[0]
-        if not rating:
-            rating = "None"
-        return rating
+        #TODO fix this stupid plugin
+#        response = requests.get('http://sitereview.bluecoat.com/rest/categorization?url={}'.format(self.url))
+#        print response
+#        soup = BeautifulSoup(response['categorization'])
+#        for a in soup.findAll('a', href=True):
+#            if "javascript" in a['href']:
+#                rating = a.contents[0]
+#        if not rating:
+#            rating = "None"
+#        print rating
+        return "None"

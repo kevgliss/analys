@@ -58,14 +58,18 @@ def create_async_tasks(datastore, task, message_queue, priority='low'):
                 log.debug("skipping... no valid extensions for extension {}".format(extension))
                 continue
 
-        log.debug("Creating task with plugin {} and resource_type of {}".format(config['Core']['name'], r_type))
         if len(task['plugins']) == 0:
-            p = plugin.AnalysPlugin(resource_id=task['submission_id'], collection='submissions',
-                                        config=config)
+            p = plugin.AnalysPlugin(resource_id=task['submission_id'], 
+                                    collection='submissions',
+                                    config=config, 
+                                    resource_type=r_type)
 
         elif config['Core']['name'] in task['plugins']:
-            p = plugin.AnalysPlugin(resource_id=task['submission_id'], config=config,
-                                    options=task['plugins'][config['Core']['name']], collection='submissions')
+            p = plugin.AnalysPlugin(resource_id=task['submission_id'], 
+                                    config=config,
+                                    options=task['plugins'][config['Core']['name']], 
+                                    collection='submissions',
+                                    resource_type=r_type)
 
 
         task_id = datastore.insert('tasks', {'submission_id': task['submission_id'],
