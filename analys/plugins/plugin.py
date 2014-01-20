@@ -43,6 +43,7 @@ class Plugin(object):
 
         self.resource_id = kwargs['resource_id']
         self.collection = kwargs['collection']
+        self.resource_type = kwargs['resource_type']
 
     def get_resource(self):
         """
@@ -51,7 +52,14 @@ class Plugin(object):
 
         """
         datastore = self.get_datastore()
-        return File(self.resource_id, self.collection, datastore)
+        #TODO this may be done dynamically as we add more resource
+        #types
+        if self.resource_type.lower() in 'file':
+            return File(self.resource_id, self.collection, datastore)
+        elif self.resource_type.lower() in 'url':
+            return URL(self.resource_id, self.collection, datastore)
+        else:
+            raise Exception
 
     def get_message_queue(self):
         """
@@ -79,7 +87,7 @@ class Plugin(object):
             simply complete some action and does not have anything to 
             return.
         
-            In the even that the plugin has nothing to return it should, at the
+            In the event that the plugin has nothing to return it should, at the
             very least return it's runtime status.
 
             Args:

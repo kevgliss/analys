@@ -85,7 +85,6 @@ class URL(object):
             log.error("Could not find resource: resource_id={}".format(resource_id))
             raise ResourceNotFound
 
-        self.data = datastore.get_file_data(result['file_id'])
         self.url = self.deobfuscate(result['resource'])
 
     def get_url_parts(self):

@@ -25,7 +25,8 @@ OPTIONS = {'scan': {'type': 'bool',
 class AnalysPlugin(Plugin):
     def __init__(self, *args, **kwargs):
         super(AnalysPlugin, self).__init__(*args, **kwargs)
-        self.curr_options = kwargs['options']
+        #TODO make sure options passing works
+        self.curr_options = {}# kwargs['options']
         self.config = kwargs['config']
 
     def submit(self):
@@ -39,11 +40,7 @@ class AnalysPlugin(Plugin):
         if self.curr_options.get('scan'):
             return self._scan()
 
-        elif self.curr_options.get('get'):
-            return self._get()
-
-        return False
-
+        return self._get()
 
     def render(self, data):
         """ Returns html rendered for the module data
@@ -77,7 +74,7 @@ class AnalysPlugin(Plugin):
         if isinstance(self.get_resource(), File):
             report = v.get(self.get_resource().md5())
 
-        elif isinstance(self.resource, URL):
+        elif isinstance(self.get_resource(), URL):
             report = v.get(self.get_resource().url)
 
         self.insert(report)

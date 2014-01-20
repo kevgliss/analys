@@ -9,13 +9,13 @@
 .. moduleauthor:: Kevin Glisson <kevin.glisson@gmail.com>
 """
 #TODO check for existing identical resource, confirm creation
+import re
 import logging
 
 from analys.common import mime
 from analys.common.settings import Settings
 from analys.common.extractor import Extractor
 from analys.plugins.interfaces import File, URL
-
 
 log = logging.getLogger(__name__)
 
@@ -34,19 +34,20 @@ def url_submission(request_dict, datastore, plugin_manager):
             response (dict): A response dictionary containing the deobfuscated url and
                              all the available plugins and options found to be installed/enabled
     """
+    def _obfuscate(url):
+        if not url.startswith('http://'):
+            url = "".join(['http://', url])
+        url = re.sub('(?i)http', 'hxxp', url)
+        return url
+
+
+    #TODO figure out more sane what to obfuscate/deobfuscate url at anytime
     response = {}
-
-    #the url object deobfuscates upon init
-    u = URL(request_dict['resource'])
-
-    response['resource'] = u.url
-    response['extension'] = u.get_url_parts().scheme
-
+    response['resource'] = _obfuscate(request_dict['resource'])
     response['owner'] = request_dict['owner']
     response['resource_type'] = 'URL'
-    #determine resource type
-    datastore.insert('submissions', response)
-    
+    response['extension'] = '' 
+    response['submission_id'] = datastore.insert('submissions', response)
     #purposely dont store plugin options with submisison data
     response['plugins'] = plugin_manager.get_plugin_options(['URL', 'File,URL'], datastore)
     return response
