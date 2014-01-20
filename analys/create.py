@@ -10,9 +10,12 @@
 """
 #TODO check for existing identical resource, confirm creation
 import logging
+
 from analys.common import mime
+from analys.common.settings import Settings
 from analys.common.extractor import Extractor
 from analys.plugins.interfaces import File, URL
+
 
 log = logging.getLogger(__name__)
 
@@ -78,11 +81,18 @@ def file_submission(request_dict, datastore, plugin_manager):
 
     response = {}
     response['owner'] = request_dict['owner']
+    response['resource_type'] = 'FILE'
+    response['resource'] = request_dict['resource'].filename
 
     parent_id = _submit_file(request_dict['resource'].file.read(), request_dict['resource'].filename)
-    
+   
+    response.update({'_id': parent_id})
     f = File(parent_id, 'submissions', datastore)
-    mimetype, extension = mime.search(f)
+    
+    s = Settings(datastore)
+    mimetypes = s.get_mimetype_mappings()
+    
+    mimetype, extension = mime.search(f, mimetypes)
 
     #TODO create frontend for password insertion
     if extension in ['zip', 'rar']:
@@ -103,6 +113,7 @@ def file_submission(request_dict, datastore, plugin_manager):
             
     else:
         #we dont want to try and find plugins for compressed files
+        
         response['plugins'] = plugin_manager.get_plugin_options(['file', 'file,url'], extension)
 
     return response 

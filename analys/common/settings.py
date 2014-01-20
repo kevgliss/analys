@@ -47,7 +47,10 @@ class Settings(object):
                 passwords.append(password)
                 self.datastore.update('settings', value['_id'], {'compressed_passwords': passwords})
                 return passwords        
-
+    
+        self.datastore.update('settings', value['_id'], {'compressed_passwords': passwords}, upsert=True)
+    
+    
     def remove_compressed_password(self, password, user):
         """
             Removes a password from the list of possible compressions passwords
@@ -70,8 +73,7 @@ class Settings(object):
 
     def create_mimetype_mappings(self, mimetypes, user='admin'):
         self.datastore.insert('settings', {'user': user, 
-                                           'mimetypes_mappings': mimetypes})
-
+                                           'mimetype_mappings': mimetypes})
 
     def get_mimetype_mappings(self, user='admin'):
         """
@@ -79,7 +81,8 @@ class Settings(object):
         """
         for value in self.datastore.get_all_documents('settings'):
             if user in value['user']:
-                return value['mimetype_mappings']
+                if value.get('mimetype_mappings'):
+                    return value['mimetype_mappings']
 
     def add_mimetype_mapping(self, mimetype, user='admin'):
         """

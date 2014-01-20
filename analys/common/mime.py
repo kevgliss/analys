@@ -15,7 +15,6 @@ import logging
 
 from analys.common.settings import Settings
 from analys.exceptions import InvalidMimeType
-from analys.common.utils import get_datastore
 
 log = logging.getLogger(__name__)
 
@@ -23,11 +22,7 @@ log = logging.getLogger(__name__)
 MAGIC_TYPES = [('Zip archive data', 'application/zip'),
                ('MS Windows HtmlHelp Data', 'text/html')]
 
-def get_file_types():
-    s = Settings(get_datastore())
-    return s.get_mimetype_mappings()
-
-def search(file):
+def search(file, mimetypes):
     """ 
         Search attempt to identify a filetype category for a
         particular file. It uses a list of known mime types and a
@@ -63,7 +58,7 @@ def search(file):
             if app == guess:
                 mime = valid_mime
 
-    for analys_mime, extension in get_file_types():
+    for analys_mime, extension in mimetypes:
         if mime in analys_mime:
             if extension == 'zip':
                 extension = _peek_compressed(file)

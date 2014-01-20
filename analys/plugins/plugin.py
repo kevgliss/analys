@@ -13,8 +13,8 @@ import ConfigParser
 
 from redis import Redis
 from analys import tasks
+from analys.plugins.interfaces import File, URL
 from analys.datastore import Datastore
-
 
 log = logging.getLogger(__name__)
 
@@ -51,7 +51,7 @@ class Plugin(object):
 
         """
         datastore = self.get_datastore()
-        return datastore.hydrate(self.resource_id, self.collection)
+        return File(self.resource_id, self.collection, datastore)
 
     def get_message_queue(self):
         """
