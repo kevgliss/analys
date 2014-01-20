@@ -4,6 +4,9 @@ import sys
 import platform
 import subprocess
 
+from analys.datastore import Datastore
+from analys.common.settings import Settings
+
 def install():
     install_config = {'install_dir': '/opt/',
                       'mongodb': {'hostname': '127.0.0.1', 'port': 27017},
@@ -128,15 +131,10 @@ def install():
 
     os.system("cp -r ../* {}analys".format(install_config['install_dir']))
 
-    if subprocess.call(["python", "{}analys/setup.py".format(install_config['install_dir']), "install"]) == 0:
-        print "[+] Analys has been successfully installed"
-    else:
-        print "[-] Analys could not be installed. Do you have the right permissions?"
-
-    
     print "[+] Populating datastore with default settings"
 
-    types = [('application/msword','doc'),
+    
+    mimetypes = [('application/msword','doc'),
                 ('application/msword','doc'),
                 ('application/vnd.ms-office','doc'),
                 ('application/vnd.openxmlformats-officedocument.wordprocessingml.document','doc'),
@@ -174,8 +172,26 @@ def install():
                 ('text/html', 'html'),
                 ('text/plain', 'html')]
 
+
+    d = Datastore(install_config['mongodb']['hostname'], 
+                  install_config['mongodb']['port'])
+    s = Settings(d)
     
-def remove():
+    print "[+] Adding defualt mimetypes..."
+    for x in mimetypes:
+        print x
+    
+    s.create_mimetype_mappings(mimetypes)
+
+    passwords = ['password', 'infected']
+    
+    print "[+] Adding compressed passwords..."
+    for x in passwords:
+        print x
+    
+    s.create_compressed_passwords(passwords)
+
+def uninstall():
     pass
 
 if __name__ == '__main__':

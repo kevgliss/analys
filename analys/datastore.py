@@ -191,7 +191,7 @@ class Datastore(object):
         conn.close()
         return resource_id
 
-    def update(self, collection, resource_id, data):
+    def update(self, collection, resource_id, data, upsert=False):
         """
             Return a resouce_id for the successful insertion 
 
@@ -206,7 +206,7 @@ class Datastore(object):
         """
         conn = self.connect()
         c = Collection(conn.analys, collection)
-        c.update({"_id": ObjectId(resource_id)}, self.ensure_safe_for_insertion(data))
+        c.update({"_id": ObjectId(resource_id)}, self.ensure_safe_for_insertion(data), upsert=upsert)
         conn.close()
         return resource_id
 

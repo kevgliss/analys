@@ -46,9 +46,9 @@ class PluginManager(object):
                 options (dict): A dictionary of plugin options or and empty dict
         """
         options = {}
-        settings = Settings(datastore)
+        #settings = Settings(datastore)
         for plugin, config in self.get_plugins():
-            if config['Core']['datatype'] in types:
+            if config['Core']['datatype'].lower() in types:
                 #if we have a file deal with extension matching
                 if ext:
                     extensions = config['Core']['extensions'].split(',')
@@ -59,11 +59,11 @@ class PluginManager(object):
                 if hasattr(plugin, 'OPTIONS'):
                     #TODO make this a per user feature
                     #if they do check for an override
-                    override = settings.get_plugin_settings(config['Core']['name'])
-                    if override:
-                        options[config['Core']['name']] = overide
-                    else:
-                        options[config['Core']['name']] = plugin.OPTIONS
+                    #override = settings.get_plugin_settings(config['Core']['name'])
+                    #if override:
+                    #    options[config['Core']['name']] = overide
+                    #else:
+                    options[config['Core']['name']] = plugin.OPTIONS
                 else:
                     options[config['Core']['name']] = {}
                 
@@ -101,5 +101,5 @@ class PluginManager(object):
                                 "analys.plugins.%s.%s.plugin" %
                                     (dir, module),
                                     fromlist=['blah']), config._sections,))
-                    else:
-                        log.warning("No config file found in {}, Plugin was not loaded.".format(subfolder))
+                else:
+                    log.warning("No config file found in {}, Plugin was not loaded.".format(root))
