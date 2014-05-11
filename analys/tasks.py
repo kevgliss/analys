@@ -15,6 +15,7 @@ import logging
 import datastore
 from rq import Queue
 from analys.plugins.pluginmanager import PluginManager
+from pprint import pprint
 
 log = logging.getLogger(__name__)
 
@@ -35,6 +36,7 @@ def create_async_tasks(datastore, task, message_queue, priority='low'):
             jobs (list): List of created jobs
     """
     log.debug("Creating async tasks...")
+
     q = Queue(connection=message_queue, async=False) # no args implies default queue
     pm = PluginManager()
 
@@ -42,10 +44,12 @@ def create_async_tasks(datastore, task, message_queue, priority='low'):
     pm.load_plugins(['static'])
 
     extension = datastore.get_document_by_id('submissions', task['submission_id'])['extension']
-    
+    logging.info('Extension: {0}'.format(extension))
+
     #TODO set timeouts via the plugin config
-    jobs = []
+    jobs = []    
     for plugin, config in pm.get_plugins():
+
         #ignore plugins that dont work with this resource type
         r_type = task['resource_type']
         if r_type.lower() not in config['Core']['datatype'].lower():
@@ -71,10 +75,9 @@ def create_async_tasks(datastore, task, message_queue, priority='low'):
                                     collection='submissions',
                                     resource_type=r_type)
 
-
         task_id = datastore.insert('tasks', {'submission_id': task['submission_id'],
                                     'plugin': config['Core']['name']})
-        
+
         job_id = q.enqueue(p.submit).id
         jobs.append((config['Core']['name'], job_id, task_id))
         log.debug("Creating task with plugin {} and resource_type of {}".format(config['Core']['name'], r_type))

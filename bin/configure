@@ -59,8 +59,8 @@ def install():
     # TODO: determine different linux distros, will only work on ubuntu atm
     elif 'linux' in env.lower():
         print '[+] Updating packages...'
-        subprocess.call(['apt-get', 'update'])
-        subprocess.call(['apt-get', 'install', '-y', 'python-software-properties'])
+        # subprocess.call(['apt-get', 'update'])
+        # subprocess.call(['apt-get', 'install', '-y', 'python-software-properties'])
 
     # Install/test mongodb
     if 'n' in raw_input('[+] Would you like to try and install mongodb on this system? (Y/n)').lower():
@@ -217,15 +217,15 @@ def install():
              ('text/html', 'html'),
              ('text/plain', 'html')]
     
-    d = Datastore(install_config['mongodb']['hostname'], 
-                  install_config['mongodb']['port'])
+    d = Datastore(config['mongodb']['hostname'], 
+                  config['mongodb']['port'])
     s = Settings(d)
     
     print "[+] Adding defualt mimetypes..."
-    for x in mimetypes:
+    for x in types:
         print x
     
-    s.create_mimetype_mappings(mimetypes)
+    s.create_mimetype_mappings(types)
 
     passwords = ['password', 'infected']
     

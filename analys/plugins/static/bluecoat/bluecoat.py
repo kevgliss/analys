@@ -9,7 +9,11 @@
 A module used for intereaction with bluecoat website review
 """
 import logging
-from BeautifulSoup import BeautifulSoup
+
+try:
+    from BeautifulSoup import BeautifulSoup
+except ImportError:
+    from bs4 import BeautifulSoup
 import requests
 
 log = logging.getLogger(__file__)

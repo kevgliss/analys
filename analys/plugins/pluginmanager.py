@@ -101,5 +101,5 @@ class PluginManager(object):
                                 "analys.plugins.%s.%s.plugin" %
                                     (dir, module),
                                     fromlist=['blah']), config._sections,))
-                else:
-                    log.warning("No config file found in {}, Plugin was not loaded.".format(root))
+                # else:
+                #     log.warning("No config file found in {}, Plugin was not loaded.".format(root))

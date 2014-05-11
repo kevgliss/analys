@@ -25,6 +25,6 @@ Install the project into the virutalenv:
     source Analys/bin/activate
     python analys/setup.py install
 
-Thats it! Anayls is not installed, make sure you run all of the tests to make sure everything
+Thats it! Anayls is now installed, make sure you run all of the tests to make sure everything
 looks good:
     py.test Analys

@@ -1,13 +1,11 @@
 import swfdump
-from analys.plugins.interfaces import File
+from analys.plugins.plugin import Plugin
 
-class AnalysPlugin(object):
-    def __init__(self, *args, **kwargs):
-        self.resource = kwargs['resource']
+class AnalysPlugin(Plugin):
 
     def submit(self):
-        swf = swfdump.SWFDump(self.resource.create_temp_file())
-        return result
+        swf = swfdump.SWFDump(self.get_resource().create_temp_file())
+        return swf
 
     def render(self):
         pass

@@ -73,7 +73,7 @@ def file_submission(request_dict, datastore, plugin_manager):
         
         file_response = {'resource': filename,
                          'file_id': file_id, 
-                         'resource_type': 'FILE', 
+                         'resource_type': 'FILE',
                          'extension': filename.split('.')[-1]} # TODO: Hack in order to remove deadlock a couple lines below
         if parent:
              file_response.update({"parent": parent})

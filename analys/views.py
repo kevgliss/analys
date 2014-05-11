@@ -22,6 +22,8 @@ from analys import tasks
 from analys import datastore
 from analys.create import url_submission, file_submission
 
+from pprint import pprint
+
 log = logging.getLogger(__name__)
 
 #TODO figure out how the create renderer for mongo_json data
@@ -311,7 +313,6 @@ class Tasks(object):
         submission_id = task.get('submission_id')
         #TODO impliment priority handling
         if submission_id:
-            print task
             created_tasks = tasks.create_async_tasks(self.request.datastore, task, self.request.message_queue)
             if len(created_tasks) > 0:
 

@@ -10,7 +10,7 @@ import subprocess
 
 class SWFDump(object):
     def __init__(self, swf_file):
-        self.swf_file   = swf_file
+        self.swf_file = swf_file
 
     def analyze(self):
         """
